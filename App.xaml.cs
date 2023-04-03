@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.IO;
+using System.Reflection;
 using ManagedBass.Wasapi;
 
 namespace Analyzer
@@ -16,18 +20,43 @@ namespace Analyzer
     /// </summary>
     public partial class App : System.Windows.Application
     {
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
+        [DllImport("User32.dll", SetLastError = true)]
+        static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+
+        private NotifyIcon _notifyIcon;
         private bool _isExit;
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            
             base.OnStartup(e);
-            
+
+            MainWindow = null;
+
+            // check if another process is running
+            Process[] instances = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location));
+            Process current = Process.GetCurrentProcess();
+            int numInstances = instances.Count();
+            if (numInstances > 1)
+            {
+                for (int i = 0; i < numInstances; i++)
+                {
+                    if (instances[i].Id != current.Id)
+                    {
+                        // bring the first process that has a different id to the foreground
+                        IntPtr hMainWnd = new IntPtr(instances[i].MainWindowHandle.ToInt32());
+                        SwitchToThisWindow(hMainWnd, true);
+                        break;
+                    }
+                }
+                // and terminate the current instance to avoid having multiple instances running
+                System.Windows.Application.Current.Shutdown();
+                return;
+            }
+
             MainWindow = new MainWindow();
             MainWindow.Closing += MainWindow_Closing;
 
-            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon = new NotifyIcon();
             _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
             _notifyIcon.Icon = Analyzer.Properties.Resources.AppIcon;
             _notifyIcon.Visible = true;
@@ -83,25 +112,31 @@ namespace Analyzer
         public void ExitApplication()
         {
             _isExit = true;
-            MainWindow.Close();
-            _notifyIcon.Visible = false;
-            _notifyIcon.Dispose();
-            _notifyIcon = null;
+            if (MainWindow != null)
+            {
+                MainWindow.Close();
+                _notifyIcon.Visible = false;
+                _notifyIcon.Dispose();
+                _notifyIcon = null;
+            }
         }
 
         private void ShowMainWindow()
         {
-            if (MainWindow.IsVisible)
+            if (MainWindow != null)
             {
-                if (MainWindow.WindowState == WindowState.Minimized)
+                if (MainWindow.IsVisible)
                 {
-                    MainWindow.WindowState = WindowState.Normal;
+                    if (MainWindow.WindowState == WindowState.Minimized)
+                    {
+                        MainWindow.WindowState = WindowState.Normal;
+                    }
+                    MainWindow.Activate();
                 }
-                MainWindow.Activate();
-            }
-            else
-            {
-                MainWindow.Show();
+                else
+                {
+                    MainWindow.Show();
+                }
             }
         }
 
@@ -116,7 +151,10 @@ namespace Analyzer
             if (!_isExit)
             {
                 e.Cancel = true;
-                MainWindow.Hide(); // A hidden window can be shown again, a closed one not
+                if (MainWindow != null)
+                {
+                    MainWindow.Hide(); // A hidden window can be shown again, a closed one not
+                }
             }
         }
     }
