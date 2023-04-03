@@ -27,6 +27,7 @@ namespace Analyzer
             cboDevices.SelectedIndex = 0;
             Load();
             RefreshDeviceList();
+
             //ThreadPool.QueueUserWorkItem(new WaitCallback(delegate (object state) { LoadAudioDevice(); }), null);
             //ThreadPool.QueueUserWorkItem(new WaitCallback(delegate (object state) { LoadAudioDevice(); }), null);
         }
@@ -58,22 +59,29 @@ namespace Analyzer
         {
             List<string> toAdd = new List<string>();
             for (int i = 0; i < BassWasapi.DeviceCount; i++)
+            {
+                var device = BassWasapi.GetDeviceInfo(i);
+                if (device.IsEnabled && device.IsLoopback)
                 {
-                    var device = BassWasapi.GetDeviceInfo(i);
-                    if (device.IsEnabled && device.IsLoopback)
-                    {
                     toAdd.Add(string.Format("{0} - {1}", i, device.Name));
-                    }
                 }
+            }
             cboDevices.Dispatcher.Invoke(() =>
             {
                 cboDevices.Items.Clear();
-                foreach(string s in toAdd)cboDevices.Items.Add(s);
+                foreach (string s in toAdd)
+                {
+                    cboDevices.Items.Add(s);
+                }
             });
+
             //cboDevices.SelectedIndex = 0;
             //Bass. BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, false);
 
-            if (!Bass.Init(0, 44100, DeviceInitFlags.Default, IntPtr.Zero)) MessageBox.Show("Error while initializing the sound device");
+            if (!Bass.Init(0, 44100, DeviceInitFlags.Default, IntPtr.Zero))
+            {
+                MessageBox.Show("Error while initializing the sound device");
+            }
             deviceListInitialized = true;
         }
 
@@ -321,6 +329,11 @@ namespace Analyzer
         {
             Window scan = new Networkscanner();
             scan.Show();
+        }
+
+        private void BtnExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void sldSourceScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
