@@ -88,16 +88,16 @@ namespace Analyzer
             get
             {
                 return "";
-                try
-                {
-                    IPHostEntry entry = Dns.GetHostEntry(ip);
-                    if (entry != null)
-                    {
-                        return entry.HostName;
-                    }
-                }
-                catch { }
-                return null;
+                //try
+                //{
+                //    IPHostEntry entry = Dns.GetHostEntry(ip);
+                //    if (entry != null)
+                //    {
+                //        return entry.HostName;
+                //    }
+                //}
+                //catch { }
+                //return null;
             }
         }
         public int BandCount { get { return lines; } }
@@ -223,7 +223,7 @@ namespace Analyzer
             {
                 if (w.Count >= 17) lines = (int)w[16].Value.Value.Integer;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 try
                 {

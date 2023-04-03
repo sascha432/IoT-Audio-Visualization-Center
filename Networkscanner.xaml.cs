@@ -32,6 +32,7 @@ namespace Analyzer
 
         public Networkscanner()
         {
+            ScanCount = 1000;
             InitializeComponent();
             dgDevices.ItemsSource = MyUtils.NetworkDevices;
             //ThreadPool.SetMaxThreads(2, 2);
@@ -78,7 +79,7 @@ namespace Analyzer
                 end = int.Parse(b.Substring(b.LastIndexOf('.') + 1));
                 if (end < frm) success = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 success = false;
             }
@@ -108,11 +109,10 @@ namespace Analyzer
                 }
                 removedDevs += RemoveEmptyDevices();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 isDone = false;
             }
-            if (ScanCount == null) ScanCount = 1000;
             // button Text:
             string dots = "";
             for (int i = 0; i < btnState; i++) dots += '.';
@@ -165,11 +165,11 @@ namespace Analyzer
 
                     dev.Add(nd);
                 }
-                catch (SocketException ex)
+                catch (SocketException)
                 {
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }

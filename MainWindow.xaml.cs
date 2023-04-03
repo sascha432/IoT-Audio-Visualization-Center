@@ -6,15 +6,15 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Un4seen.Bass;
-using Un4seen.BassWasapi;
+using ManagedBass;
+using ManagedBass.Wasapi;
 
 namespace Analyzer
 {
     public partial class MainWindow : MetroWindow
     {
         private string loadedAudioDevice = "";
-        private bool audioDeviceLoaded = false;
+        //private bool audioDeviceLoaded = false;
         private bool deviceListInitialized = false;
 
         public MainWindow()
@@ -41,7 +41,7 @@ namespace Analyzer
                 cboDevices.SelectedIndex = cboDevices.Items.IndexOf(loadedAudioDevice as object);
                 MyUtils.SwitchDeviceFromString(loadedAudioDevice);
                 restartSourceSpectrum();
-                audioDeviceLoaded = true;
+                //audioDeviceLoaded = true;
             }
             });
         }
@@ -57,12 +57,12 @@ namespace Analyzer
         private void InitDevices()
         {
             List<string> toAdd = new List<string>();
-            for (int i = 0; i < BassWasapi.BASS_WASAPI_GetDeviceCount(); i++)
+            for (int i = 0; i < BassWasapi.DeviceCount; i++)
                 {
-                    var device = BassWasapi.BASS_WASAPI_GetDeviceInfo(i);
+                    var device = BassWasapi.GetDeviceInfo(i);
                     if (device.IsEnabled && device.IsLoopback)
                     {
-                    toAdd.Add(string.Format("{0} - {1}", i, device.name));
+                    toAdd.Add(string.Format("{0} - {1}", i, device.Name));
                     }
                 }
             cboDevices.Dispatcher.Invoke(() =>
@@ -71,8 +71,9 @@ namespace Analyzer
                 foreach(string s in toAdd)cboDevices.Items.Add(s);
             });
             //cboDevices.SelectedIndex = 0;
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, false);
-            if (!Bass.BASS_Init(0, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)) MessageBox.Show("Error while initializing the sound device");
+            //Bass. BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, false);
+
+            if (!Bass.Init(0, 44100, DeviceInitFlags.Default, IntPtr.Zero)) MessageBox.Show("Error while initializing the sound device");
             deviceListInitialized = true;
         }
 

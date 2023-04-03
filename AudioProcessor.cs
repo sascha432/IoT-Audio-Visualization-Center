@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using Un4seen.Bass;
-using Un4seen.BassWasapi;
+using ManagedBass;
+using ManagedBass.Wasapi;
 
 namespace Analyzer
 {
@@ -22,7 +22,7 @@ namespace Analyzer
         private DispatcherTimer _t;         //timer that refreshes the display
         private float[] _fft;               //buffer for fft data
         private double _l, _r;         //progressbars for left and right channel intensity
-        private WASAPIPROC _process;        //callback function to obtain data
+        private WasapiProcedure _process;        //callback function to obtain data
         private int _lastlevel;             //last output level
         private int _hanctr;                //last output level counter
         private List<byte> _spectrumdata;   //spectrum data buffer
@@ -50,7 +50,7 @@ namespace Analyzer
             _r = 0;
             _r = ushort.MaxValue;
             _l = ushort.MaxValue;
-            _process = new WASAPIPROC(Process);
+            _process = new WasapiProcedure(Process);
             _spectrumdata = new List<byte>();
 
             devindex = deviceIndex;
@@ -74,10 +74,10 @@ namespace Analyzer
                 {
                     if (!_initialized)
                     {
-                        bool result = BassWasapi.BASS_WASAPI_Init(devindex, 0, 0, BASSWASAPIInit.BASS_WASAPI_BUFFER, 1f, 0.05f, _process, IntPtr.Zero);
+                        bool result = BassWasapi.Init(devindex, 0, 0, WasapiInitFlags.Buffer, 1f, 0.05f, _process, IntPtr.Zero);
                         if (!result)
                         {
-                            var error = Bass.BASS_ErrorGetCode();
+                            var error = Bass.LastError;
                             //MessageBox.Show(error.ToString());
                         }
                         else
@@ -85,9 +85,9 @@ namespace Analyzer
                             _initialized = true;
                         }
                     }
-                    BassWasapi.BASS_WASAPI_Start();
+                    BassWasapi.Start();
                 }
-                else BassWasapi.BASS_WASAPI_Stop(true);
+                else BassWasapi.Stop(true);
                 System.Threading.Thread.Sleep(50);
                 _t.IsEnabled = value;
             }
@@ -99,16 +99,17 @@ namespace Analyzer
         private void _t_Tick(object sender, EventArgs e)
         {
             // get fft data. Return value is -1 on error
-            int ret = BassWasapi.BASS_WASAPI_GetData(_fft, (int)BASSData.BASS_DATA_FFT2048);
+            int ret = BassWasapi.GetData(_fft, (int)ManagedBass.DataFlags.FFT2048);
             if (ret < 0) return;
 
             OnAudioAvailable(_fft);
             _spectrumdata.Clear();
 
 
-            int level = BassWasapi.BASS_WASAPI_GetLevel();
-            _l = Utils.LowWord32(level);
-            _r = Utils.HighWord32(level);
+            int level = BassWasapi.GetLevel();
+            
+            _l = ManagedBass.BitHelper.LoWord(level);
+            _r = ManagedBass.BitHelper.HiWord(level);
             if (level == _lastlevel && level != 0) _hanctr++;
             _lastlevel = level;
 
@@ -121,7 +122,7 @@ namespace Analyzer
                 _l = 0;
                 _r = 0;
                 Free();
-                Bass.BASS_Init(0, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+                Bass.Init(0, 44100, DeviceInitFlags.Default, IntPtr.Zero);
                 _initialized = false;
                 Enable = true;
             }
@@ -140,8 +141,8 @@ namespace Analyzer
         //cleanup
         public void Free()
         {
-            BassWasapi.BASS_WASAPI_Free();
-            Bass.BASS_Free();
+            BassWasapi.Free();
+            Bass.Free();
         }
 
         public static List<byte> getSpectrumData(float[] fftData, int bands, double r, double factor)

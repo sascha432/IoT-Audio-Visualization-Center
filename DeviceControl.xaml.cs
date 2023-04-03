@@ -212,7 +212,7 @@ namespace Analyzer
                     tbtnPower.IsChecked = true;
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 ;
             }

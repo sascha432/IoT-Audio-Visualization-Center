@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using Un4seen.BassWasapi;
+using ManagedBass.Wasapi;
 
 namespace Analyzer
 {
@@ -61,12 +61,12 @@ namespace Analyzer
             m.MenuItems.Add("Enable All").Click += (s, e) => MyUtils.EnableAll();
             m.MenuItems.Add("Disable All").Click += (s, e) => MyUtils.DisableAll();
             List<MenuItem> mItems = new List<MenuItem>();
-            for (int i = 0; i < BassWasapi.BASS_WASAPI_GetDeviceCount(); i++)
+            for (int i = 0; i < BassWasapi.DeviceCount; i++)
             {
-                var device = BassWasapi.BASS_WASAPI_GetDeviceInfo(i);
+                var device = BassWasapi.GetDeviceInfo(i);
                 if (device.IsEnabled && device.IsLoopback)
                 {
-                    var x = new MenuItem(string.Format("{0} - {1}", i, device.name), AudioSwitching);
+                    var x = new MenuItem(string.Format("{0} - {1}", i, device.Name), AudioSwitching);
                     mItems.Add(x);
                 }
             }
