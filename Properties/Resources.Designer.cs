@@ -8,10 +8,15 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Runtime.InteropServices;
+using System;
+
 namespace Analyzer.Properties {
     using System;
-    
-    
+    using System.Diagnostics;
+    using System.Linq;
+
+
     /// <summary>
     ///   Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
     /// </summary>
@@ -23,7 +28,10 @@ namespace Analyzer.Properties {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-        
+
+        [DllImport("User32.dll", SetLastError = true)]
+        static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
@@ -65,6 +73,26 @@ namespace Analyzer.Properties {
         /// </summary>
         internal static System.Drawing.Icon AppIcon {
             get {
+                // check if another process is running
+                Process[] instances = System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location));
+                Process current = System.Diagnostics.Process.GetCurrentProcess();
+                int numInstances = instances.Count();
+                if (numInstances > 1)
+                {
+                    for (int i = 0; i < numInstances; i++) 
+                    {
+                        if (instances[i].Id != current.Id)
+                        {
+                            // bring the first process that has a different id to the foreground
+                            System.IntPtr hMainWnd = new System.IntPtr(instances[i].MainWindowHandle.ToInt32());
+                            SwitchToThisWindow(hMainWnd, true);
+                            break;
+                        }
+                    }
+                    // and terminate the current instance to avoid having multiple instances running
+                    current.Kill();
+                }
+
                 object obj = ResourceManager.GetObject("AppIcon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
