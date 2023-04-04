@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
 using ManagedBass.Wasapi;
+using MahApps.Metro;
 
 namespace Analyzer
 {
@@ -148,13 +149,10 @@ namespace Analyzer
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (!_isExit)
+            if (!_isExit && MainWindow != null)
             {
                 e.Cancel = true;
-                if (MainWindow != null)
-                {
-                    MainWindow.Hide(); // A hidden window can be shown again, a closed one not
-                }
+                MainWindow.Hide(); // A hidden window can be shown again, a closed one not
             }
         }
     }
