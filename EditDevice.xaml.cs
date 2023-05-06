@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -24,9 +25,17 @@ namespace Analyzer
         UdpDevice toEdit;
         MainWindow mainWindowInstance;
         string initialName;
+        ArrayList nudLinesItems;
+
         public EditDevice(UdpDevice u, MainWindow x)
         {
             InitializeComponent();
+            nudLinesItems = new ArrayList();
+            nudLinesItems.Add("1");
+            nudLinesItems.Add("8");
+            nudLinesItems.Add("16");
+            nudLinesItems.Add("32");
+            nudLinesItems.Add("64");
             toEdit = u;
             initialName = String.Copy(u.DeviceName);
             RefreshEditFields();
@@ -46,7 +55,9 @@ namespace Analyzer
             txtName.Text = toEdit.DeviceName;
             txtIp.Text = toEdit.Ip;
             txtOutput.Text = "";
-            nudLines.Value = toEdit.Lines;
+            nudLines.Items.Clear();
+            nudLines.ItemsSource = nudLinesItems;
+            nudLines.SelectedItem = toEdit.Lines.ToString();
             nudPort.Value = toEdit.Port;
             sldSmoothing.Value = toEdit.Smoothing;
         }
@@ -78,9 +89,10 @@ namespace Analyzer
             }
             try
             {
+                var item = nudLines.SelectedItem;
+                var itemInt = (int)item;
                 UdpDevice toSet = MyUtils.UdpDevices.Find(x => x.DeviceName == initialName);
-                MyUtils.UdpDevices.Remove(toSet);
-                toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value);
+                toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, int.Parse(nudLines.SelectedItem.ToString()), (int)sldSmoothing.Value);
                 MyUtils.UdpDevices.Add(toSet);
                 this.Close();
             }

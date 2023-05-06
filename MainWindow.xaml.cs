@@ -55,10 +55,21 @@ namespace Analyzer
             RefreshDevicesBox();
         }
 
+        public List<string> getCboDevices()
+        {
+            var names = new List<string>();
+            foreach (var item in cboDevices.Items)
+            {
+                names.Add(item.ToString());
+            }
+            return names;
+        }
+
         private void InitDevices()
         {
-            List<string> toAdd = new List<string>();
-            for (int i = 0; i < BassWasapi.DeviceCount; i++)
+            var toAdd = new List<string>();
+            var count = BassWasapi.DeviceCount;
+            for (int i = 0; i < count; i++)
             {
                 var device = BassWasapi.GetDeviceInfo(i);
                 if (device.IsEnabled && device.IsLoopback)
@@ -69,9 +80,9 @@ namespace Analyzer
             cboDevices.Dispatcher.Invoke(() =>
             {
                 cboDevices.Items.Clear();
-                foreach (string s in toAdd)
+                foreach (string name in toAdd)
                 {
-                    cboDevices.Items.Add(s);
+                    cboDevices.Items.Add(name);
                 }
             });
 

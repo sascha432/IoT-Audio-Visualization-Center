@@ -66,9 +66,6 @@ namespace Analyzer
             spcDev.Smoothing = Smoothing;
             ckbSmoothing.IsChecked = DeviceItem.Smooth;
             if (!(bool)ckbSmoothing.IsChecked) spcDev.Smoothing = 0;
-            FillDropDowns();
-            sld.Value = DeviceItem.brightness;
-            tbtnPower.IsChecked = (DeviceItem.power == 1);
         }
 
         public class ddElement
@@ -104,27 +101,6 @@ namespace Analyzer
             return d;
         }
 
-        public void FillDropDowns()
-        {
-            ddbVisualizers.Items.Clear();
-            ddbPatterns.Items.Clear();
-            foreach (UdpDevice.Pattern p in DeviceItem.VisualizationPatterns)
-            {
-                ddbVisualizers.Items.Add(string.Format("{0}\t{1}", p.id, p.name.Replace("⋆", "")));
-                //ddbVisualizers.Items.Add(getDdGrid(p));
-            }
-            foreach (UdpDevice.Pattern p in DeviceItem.RegularPatterns)
-            {
-                ddbPatterns.Items.Add(string.Format("{0}\t{1}", p.id, p.name.Replace("⋆", "")));
-                //ddbPatterns.Items.Add(getDdGrid(p));
-            }
-            foreach (UdpDevice.Pattern p in DeviceItem.TwinklePatterns)
-            {
-                ddbTwinkles.Items.Add(string.Format("{0}\t{1}", p.id, p.name.Replace("⋆", "")));
-                //ddbTwinkles.Items.Add(getDdGrid(p));
-            }
-        }
-
         public string DeviceName
         {
             get { return DeviceItem.DeviceName; }
@@ -142,9 +118,6 @@ namespace Analyzer
 
         private void DeviceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (e.Source == null || lblBrit == null) return;
-            lblBrit.Content = ((Slider)e.Source).Value.ToString() + "%";
-            DeviceItem.setBrightnessAsync((int)((Slider)e.Source).Value);
         }
 
         private void CkbEnable_Changed(object sender, RoutedEventArgs e)
@@ -204,12 +177,10 @@ namespace Analyzer
                 if (m.Name == "MenuVisualizers")
                 {
                     ckbEnable.IsChecked = true;
-                    tbtnPower.IsChecked = true;
                 }
                 else
                 {
                     ckbEnable.IsChecked = false;
-                    tbtnPower.IsChecked = true;
                 }
             }
             catch(Exception)
@@ -220,24 +191,14 @@ namespace Analyzer
 
         private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (tbtnPower.IsChecked == true)
-            {
-                DeviceItem.setPowerAsync(1);
-            }
-            else DeviceItem.setPowerAsync(0);
         }
 
         private void sldSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            DeviceItem.setSpeedAsync((int)sldSpeed.Value);
         }
 
         private void ddb_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            if (DeviceItem.VisualizationPatterns.Count <= 0)
-            {
-                if(DeviceItem.getWebserverInfo()) FillDropDowns();
-            }
         }
 
         private void btnOTA_Click(object sender, RoutedEventArgs e)
@@ -265,9 +226,11 @@ namespace Analyzer
 
         private void RefreshDevice()
         {
-            FillDropDowns();
-            sld.Value = DeviceItem.brightness;
-            if (DeviceItem.power == 1) tbtnPower.IsChecked = true; else tbtnPower.IsChecked = false;
+        }
+
+        private void spcDev_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

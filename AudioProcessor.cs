@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -147,9 +148,33 @@ namespace Analyzer
 
         public static List<byte> getSpectrumData(float[] fftData, int bands, double r, double factor)
         {
-            int retBands = bands;
-            bands = Convert.ToInt32(((double)bands) / r);
-            return getSpectrumData(fftData, bands, factor).GetRange(0, retBands);
+            //int retBands = bands;
+            //bands = Convert.ToInt32(((double)bands) / r);
+            int precision = 16;
+            var list = new List<byte>();
+            int sumSteps = 0;
+            int sum = 0;
+            var items = getSpectrumData(fftData, 71, factor);
+            int totalBands = items.Count;
+            double step = (totalBands * precision) / (double)(bands + 2);
+            foreach(byte value in items)
+            {
+                for(int i = 0; i < precision; i++)
+                {
+                    sum += value;
+                    if (++sumSteps > step)
+                    {
+                        list.Add((byte)(sum / step));
+                        sumSteps = 0;
+                        sum = 0;
+                    }
+                }
+            }
+            //while(list.Count < bands)
+            //{
+            //    list.Add(0);
+            //}
+            return list.GetRange(0, bands);
         }
 
         public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
@@ -164,14 +189,14 @@ namespace Analyzer
             for (x = 0; x < bands; x++)
             {
                 float peak = 0;
-                int b1 = (int)Math.Pow(2, x * 10.0 / (bands - 1));
+                int b1 = (int)Math.Pow(2, x * 5 / (bands - 1));
                 if (b1 > 1023) b1 = 1023;
                 if (b1 <= b0) b1 = b0 + 1;
                 for (; b0 < b1; b0++)
                 {
                     if (peak < fftData[1 + b0]) peak = fftData[1 + b0];
                 }
-                y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
+                y = (int)(Math.Sqrt(peak) * 4 * 255 - 4);
                 if (y > 255) y = 255;
                 if (y < 0) y = 0;
                 result.Add((byte)y);

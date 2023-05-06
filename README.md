@@ -2,6 +2,8 @@
 
 ## Change Log
 
+- Changed the output to a more realistic spectrum analyzer. The ideal curve would be 10Hz for the first bar, the center 1.5KHz and the last bar 20KHz. (TODO requires to rewrite all the FFT functions, and the resulting animation would look less spectacular. https://youtu.be/4Otqdwql63c?t=73, https://github.com/mborgerding/kissfft)
+- Removed a lot options from the device dialog
 - Using the broadcast IP address will send UDP multicast packets to all devices in the network
 - If an instance is already running, starting the app will bring it to the foreground instead of starting a new instance
 - Support for NET 4.8

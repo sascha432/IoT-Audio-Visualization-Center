@@ -13,6 +13,8 @@ using System.IO;
 using System.Reflection;
 using ManagedBass.Wasapi;
 using MahApps.Metro;
+using System.Threading;
+using System.Collections;
 
 namespace Analyzer
 {
@@ -66,45 +68,23 @@ namespace Analyzer
             ShowMainWindow();
         }
 
-        /*
-        private void CreateContextMenu()
-        {
-            _notifyIcon.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
-            _notifyIcon.ContextMenuStrip.Items.Add("Dashboard").Click += (s, e) => ShowMainWindow();
-            _notifyIcon.ContextMenuStrip.Items.Add("Enable All").Click += (s, e) => MyUtils.EnableAll();
-            _notifyIcon.ContextMenuStrip.Items.Add("Disable All").Click += (s, e) => MyUtils.DisableAll();
-
-            ToolStrip ts = new ToolStrip();
-            ToolStripDropDownButton tsddb = new ToolStripDropDownButton("device x");
-            ts.Items.Add(tsddb);
-            //tsddb.DropDown = _notifyIcon.ContextMenuStrip;
-            
-
-            _notifyIcon.ContextMenuStrip.Items.Add("Exit").Click += (s, e) => ExitApplication();
-        }
-        */
-
         private void CreateContextMenu2()
         {
-            System.Windows.Forms.ContextMenu m = new System.Windows.Forms.ContextMenu();
+            var m = new System.Windows.Forms.ContextMenu();
+
             m.MenuItems.Add("Dashboard").Click += (s, e) => ShowMainWindow();
             m.MenuItems.Add("Enable All").Click += (s, e) => MyUtils.EnableAll();
             m.MenuItems.Add("Disable All").Click += (s, e) => MyUtils.DisableAll();
-            List<MenuItem> mItems = new List<MenuItem>();
-            for (int i = 0; i < BassWasapi.DeviceCount; i++)
+
+            // MainWindow creates a Listbox already
+            var ma = new List<MenuItem>();
+            foreach (string name in (MainWindow as Analyzer.MainWindow).getCboDevices())
             {
-                var device = BassWasapi.GetDeviceInfo(i);
-                if (device.IsEnabled && device.IsLoopback)
-                {
-                    var x = new MenuItem(string.Format("{0} - {1}", i, device.Name), AudioSwitching);
-                    mItems.Add(x);
-                }
+                ma.Add(new MenuItem(name, AudioSwitching));
             }
-            MenuItem mi = new MenuItem("Audio Device",mItems.ToArray());
-            
+            var mi = new MenuItem("Audio Device", ma.ToArray());
             m.MenuItems.Add(mi);
             //tsddb.DropDown = _notifyIcon.ContextMenuStrip;
-
 
             m.MenuItems.Add("Exit").Click += (s, e) => ExitApplication();
             _notifyIcon.ContextMenu = m;
@@ -113,6 +93,7 @@ namespace Analyzer
         public void ExitApplication()
         {
             _isExit = true;
+            //DestroyGenerateSubMenuThread();
             if (MainWindow != null)
             {
                 MainWindow.Close();
