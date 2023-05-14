@@ -14,7 +14,7 @@
         SizeChanged="MainWindow_SizeChanged"
         Title="Audio Visualization"  
         Height="760" 
-        Width="1500" 
+        Width="1200" 
         BorderThickness="0"
         WindowStartupLocation="CenterScreen" 
         MinWidth="425" 

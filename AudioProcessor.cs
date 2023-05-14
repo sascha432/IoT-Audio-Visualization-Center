@@ -37,7 +37,7 @@ namespace Analyzer
 
         public AudioProcessor(int deviceIndex, bool trimEnd = true)
         {
-            _fftSize = 2048;
+            _fftSize = 8192;
             _fft = new float[_fftSize];
             _lastlevel = 0;
             _hanctr = 0;
@@ -99,7 +99,24 @@ namespace Analyzer
         private void _t_Tick(object sender, EventArgs e)
         {
             // get fft data. Return value is -1 on error
-            int ret = BassWasapi.GetData(_fft, (int)ManagedBass.DataFlags.FFT2048);
+            int len = 0;
+            switch(_fftSize)
+            {
+                case 8192:
+                    _fftSize = 8192;
+                    len = (int)ManagedBass.DataFlags.FFT8192;
+                    break;
+                case 4096:
+                    _fftSize = 4096;
+                    len = (int)ManagedBass.DataFlags.FFT4096;
+                    break;
+                case 2048:
+                    _fftSize = 2048;
+                    len = (int)ManagedBass.DataFlags.FFT2048;
+                    break;
+
+            }
+            int ret = BassWasapi.GetData(_fft, len);
             if (ret < 0)
             {
                 return;
@@ -178,7 +195,7 @@ namespace Analyzer
 
             // max frequency for logarithmic scale
             double maxFrequency = 16000;
-            double px = 1.15;
+            double px = 1.22;
             double mul = maxFrequency / Math.Pow(px, bands);
 
             int x, y;
