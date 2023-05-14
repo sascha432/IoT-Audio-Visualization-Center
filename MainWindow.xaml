@@ -14,7 +14,7 @@
         SizeChanged="MainWindow_SizeChanged"
         Title="Audio Visualization"  
         Height="760" 
-        Width="800" 
+        Width="1500" 
         BorderThickness="0"
         WindowStartupLocation="CenterScreen" 
         MinWidth="425" 
@@ -36,7 +36,7 @@
         <Grid>
             <Label Content="200%" Margin="0,59,200,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="39"/>
             <Label Content="50%" Margin="0,236,206,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="33"/>
-            <Slider Name="sldSourceScale" Ticks="50,75,100,150,200,250,300,350,400" IsSnapToTickEnabled="true" BorderBrush="White" Background="{x:Null}" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" Width="30" Margin="0,85,209,0" HorizontalAlignment="Right" Maximum="400" Minimum="50" Orientation="Vertical" ValueChanged="sldSourceScale_ValueChanged" Value="100" SmallChange="10" LargeChange="10" TickPlacement="TopLeft" Height="146" VerticalAlignment="Top"/>
+            <Slider Name="sldSourceScale" Ticks="50,75,100,150,200,250,300,350,400" IsSnapToTickEnabled="true" BorderBrush="White" Background="{x:Null}" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" Width="30" Margin="0,85,209,0" HorizontalAlignment="Right" Maximum="400" Minimum="50" Orientation="Vertical"  Value="100" SmallChange="10" LargeChange="10" TickPlacement="TopLeft" Height="146" VerticalAlignment="Top"/>
             <ComboBox x:Name="cboDevices" Margin="121,11,245,0" VerticalAlignment="Top" Height="38" SelectionChanged="CboDevices_SelectionChanged"/>
             <Label x:Name="label" Content="Audio source:" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" FontSize="16"/>
             <local:Spectrum x:Name="spcSource" BarHeight="200" TotalWidth="770" Lines="50" Margin="11,54,244,0" Smoothing="3" Height="200" VerticalAlignment="Top" HorizontalAlignment="Left" />
@@ -54,7 +54,7 @@
                                 <ColumnDefinition Width="85*" />
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Content="Speed:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="14"/>
-                            <Slider Grid.Column="1" x:Name="sldSpeed" HorizontalAlignment="Right" VerticalAlignment="Top" Width="210" BorderBrush="White" Background="{x:Null}" IsSnapToTickEnabled="True" Value="52" SmallChange="1" LargeChange="10" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" FontSize="16" Height="29" ValueChanged="sldSpeed_ValueChanged" Minimum="1" Maximum="255"/>
+                            <Slider Grid.Column="1" x:Name="sldSpeed" HorizontalAlignment="Right" VerticalAlignment="Top" Width="210" BorderBrush="White" Background="{x:Null}" IsSnapToTickEnabled="True" Value="52" SmallChange="1" LargeChange="10" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" FontSize="16" Height="29" Minimum="1" Maximum="255"/>
                         </Grid>
                         <Button x:Name="btnReboot" Content="Reboot" Click="btnReboot_Click"/>
                         <Button x:Name="btnAlexa" Content="Alexa Pairing" Click="btnAlexa_Click"/>

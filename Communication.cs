@@ -269,32 +269,47 @@ namespace Analyzer
 
         public bool Send(List<byte> arr)
         {
-            if (!enable) return true;
+            if (!enable)
+            {
+                return true;
+            }
             var x = new byte[lines];
             for (int i = 0; i < lines; i++)
             {
                 x[i] = arr[i];
-                if (x[i] <= 0) x[i] = 1;
+                if (x[i] <= 0)
+                {
+                    x[i] = 1;
+                }
             }
             return client.Send(x, lines) > 0;
         }
 
         public bool Send(string s)
         {
-            if (!enable) return true;
+            if (!enable)
+            {
+                return true;
+            }
             return client.Send(Encoding.ASCII.GetBytes(s), Encoding.ASCII.GetBytes(s).Length) > 0;
         }
 
         public bool Start()
         {
-            if (!enable) MyUtils.ap.AudioAvailable += new AudioProcessor.AudioAvailableEventHandler(this.UpdateValues);
+            if (!enable)
+            {
+                MyUtils.ap.AudioAvailable += new AudioProcessor.AudioAvailableEventHandler(this.UpdateValues);
+            }
             enable = true;
             return true;
         }
 
         public bool Stop()
         {
-            if (enable) MyUtils.ap.AudioAvailable -= new AudioProcessor.AudioAvailableEventHandler(this.UpdateValues);
+            if (enable)
+            {
+                MyUtils.ap.AudioAvailable -= new AudioProcessor.AudioAvailableEventHandler(this.UpdateValues);
+            }
             enable = false;
             return true;
         }
@@ -307,7 +322,10 @@ namespace Analyzer
             {
                 lastVals.Dequeue();
             }
-            if (!Smooth) Send(newData);
+            if (!Smooth)
+            {
+                Send(newData);
+            }
             else
             {
                 Send(MyUtils.GetAverageSpectrum(lastVals, Smoothing));
@@ -328,8 +346,6 @@ namespace Analyzer
             public string name;
         }
     }
-
-
 
 
     public class SerialComDevice : ICommunicate
@@ -372,7 +388,10 @@ namespace Analyzer
 
         public bool Start()
         {
-            if (Serial == null) return false;
+            if (Serial == null)
+            {
+                return false;
+            }
             if (!Serial.IsOpen)
             {
                 Serial.Open();
@@ -382,13 +401,19 @@ namespace Analyzer
 
         public bool Stop()
         {
-            if (Serial != null && Serial.IsOpen) Serial.Close();
+            if (Serial != null && Serial.IsOpen)
+            {
+                Serial.Close();
+            }
             return true;
         }
 
         public void UpdateValues(object sender, AudioAvailableEventArgs e)
         {
-            if (this.Ready()) Send(AudioProcessor.getSpectrumData(e.AudioAvailable, lines, MyUtils.sourceFactor));
+            if (this.Ready())
+            {
+                Send(AudioProcessor.getSpectrumData(e.AudioAvailable, lines, MyUtils.sourceFactor));
+            }
         }
 
         public bool Ready()
@@ -406,6 +431,7 @@ namespace Analyzer
         private int smoothing;
         public double range = 0.7;
         public string name;
+        
 
         public WpfUserControlDevice(int lines, Spectrum spec, string n)
         {
@@ -430,7 +456,10 @@ namespace Analyzer
             {
                 int num = Convert.ToInt32(p.Name.Substring(1));
                 //if (num <= arr.Count) p.Value = MyUtils.MapValue(0,255,0,100,arr[num - 1]);
-                if (num <= arr.Count) p.Value = arr[num - 1];
+                if (num <= arr.Count)
+                {
+                    p.Value = arr[num - 1];
+                }
             }
             return true;
         }
@@ -474,7 +503,10 @@ namespace Analyzer
             {
                 lastVals.Dequeue();
             }
-            if (!Smooth) Send(newData);
+            if (!Smooth)
+            {
+                Send(newData);
+            }
             else
             {
                 Send(MyUtils.GetAverageSpectrum(lastVals, Smoothing));
@@ -513,9 +545,15 @@ namespace Analyzer
 
         public bool Send(List<byte> arr)
         {
-            if (!this.Ready()) return false;
+            if (!this.Ready())
+            {
+                return false;
+            }
             List<int> n = new List<int>();
-            foreach (byte b in arr) n.Add((byte)(MyUtils.MapValue(0, 255, 0, 100, ((double)b) * w.sldScale.Value)));
+            foreach (byte b in arr)
+            {
+                n.Add((byte)(MyUtils.MapValue(0, 255, 0, 100, ((double)b) * w.sldScale.Value)));
+            }
             if (n.Count >= 32)
             {
                 #region PROGRESS_BAR
@@ -563,7 +601,10 @@ namespace Analyzer
 
         public bool Start()
         {
-            if (!Ready()) w.Show();
+            if (!Ready())
+            {
+                w.Show();
+            }
             open = true;
             return true;
         }
@@ -577,7 +618,10 @@ namespace Analyzer
 
         public void UpdateValues(object sender, AudioAvailableEventArgs e)
         {
-            if (this.Ready()) Send(AudioProcessor.getSpectrumData(e.AudioAvailable, 32, MyUtils.sourceFactor));
+            if (this.Ready())
+            {
+                Send(AudioProcessor.getSpectrumData(e.AudioAvailable, 32, MyUtils.sourceFactor));
+            }
         }
     }
 }

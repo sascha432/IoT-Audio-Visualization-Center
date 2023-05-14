@@ -93,7 +93,6 @@ namespace Analyzer
         public void ExitApplication()
         {
             _isExit = true;
-            //DestroyGenerateSubMenuThread();
             if (MainWindow != null)
             {
                 MainWindow.Close();

@@ -300,11 +300,6 @@ namespace Analyzer
             foreach (UdpDevice u in MyUtils.UdpDevices) u.modeReboot();
         }
 
-        private void sldSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            foreach (UdpDevice u in MyUtils.UdpDevices) u.setSpeedAsync((int)sldSpeed.Value);
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             AddDeviceDialogAsync();
@@ -347,9 +342,9 @@ namespace Analyzer
             Application.Current.Shutdown();
         }
 
-        private void sldSourceScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void spcSource_Loaded(object sender, RoutedEventArgs e)
         {
-            MyUtils.sourceFactor = sldSourceScale.Value / 100.0;
+
         }
     }
 }

@@ -112,7 +112,14 @@ namespace Analyzer
                 for (int i = 0; i < measure.Count; i++)
                 {
                     int x = Convert.ToByte(measure[i] / Smoothing);
-                    if ((result[i] + ((int)x)) > 255) result[i] = 255; else result[i] += (byte)x;
+                    if ((result[i] + ((int)x)) > 255)
+                    {
+                        result[i] = 255;
+                    }
+                    else
+                    {
+                        result[i] += (byte)x;
+                    }
                 }
             }
             return result.ToList();
@@ -139,9 +146,7 @@ namespace Analyzer
             int timeout = 1000;
             PingOptions options = new PingOptions(64, true);
             PingReply reply = pingSender.Send(ip, timeout, buffer, options);
-            if (reply.Status == IPStatus.Success)
-                return true;
-            else return false;
+            return (reply.Status == IPStatus.Success);
         }
 
         public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -171,8 +176,7 @@ namespace Analyzer
             ser.Serialize(sw, toSave);
             string xml = sw.ToString();
             Properties.Settings.Default.Configuration = xml;
-            Properties.Settings.Default.Save();
-            
+            Properties.Settings.Default.Save();            
         }
 
         public static SaveObject RetrieveSettings()

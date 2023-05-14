@@ -55,9 +55,7 @@ namespace Analyzer
             txtName.Text = toEdit.DeviceName;
             txtIp.Text = toEdit.Ip;
             txtOutput.Text = "";
-            nudLines.Items.Clear();
-            nudLines.ItemsSource = nudLinesItems;
-            nudLines.SelectedItem = toEdit.Lines.ToString();
+            nudLines.Value = toEdit.Lines;
             nudPort.Value = toEdit.Port;
             sldSmoothing.Value = toEdit.Smoothing;
         }
@@ -89,10 +87,8 @@ namespace Analyzer
             }
             try
             {
-                var item = nudLines.SelectedItem;
-                var itemInt = (int)item;
                 UdpDevice toSet = MyUtils.UdpDevices.Find(x => x.DeviceName == initialName);
-                toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, int.Parse(nudLines.SelectedItem.ToString()), (int)sldSmoothing.Value);
+                toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value);
                 MyUtils.UdpDevices.Add(toSet);
                 this.Close();
             }

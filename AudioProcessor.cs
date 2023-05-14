@@ -21,6 +21,7 @@ namespace Analyzer
 
         private bool _enable;               //enabled status
         private DispatcherTimer _t;         //timer that refreshes the display
+        private static int _fftSize;
         private float[] _fft;               //buffer for fft data
         private double _l, _r;         //progressbars for left and right channel intensity
         private WasapiProcedure _process;        //callback function to obtain data
@@ -32,15 +33,12 @@ namespace Analyzer
         private int devindex;               //used device index
 
         
-
-
-
         //ctor
 
         public AudioProcessor(int deviceIndex, bool trimEnd = true)
         {
-
-            _fft = new float[1024];
+            _fftSize = 2048;
+            _fft = new float[_fftSize];
             _lastlevel = 0;
             _hanctr = 0;
             _t = new DispatcherTimer();
@@ -88,30 +86,36 @@ namespace Analyzer
                     }
                     BassWasapi.Start();
                 }
-                else BassWasapi.Stop(true);
+                else
+                {
+                    BassWasapi.Stop(true);
+                }
                 System.Threading.Thread.Sleep(50);
                 _t.IsEnabled = value;
             }
         }
-
-
 
         //timer 
         private void _t_Tick(object sender, EventArgs e)
         {
             // get fft data. Return value is -1 on error
             int ret = BassWasapi.GetData(_fft, (int)ManagedBass.DataFlags.FFT2048);
-            if (ret < 0) return;
+            if (ret < 0)
+            {
+                return;
+            }
 
             OnAudioAvailable(_fft);
             _spectrumdata.Clear();
-
 
             int level = BassWasapi.GetLevel();
             
             _l = ManagedBass.BitHelper.LoWord(level);
             _r = ManagedBass.BitHelper.HiWord(level);
-            if (level == _lastlevel && level != 0) _hanctr++;
+            if (level == _lastlevel && level != 0)
+            {
+                _hanctr++;
+            }
             _lastlevel = level;
 
             //Required, because some programs hang the output. If the output hangs for a 75ms
@@ -131,8 +135,6 @@ namespace Analyzer
 
         }
 
-
-
         // WASAPI callback, required for continuous recording
         private int Process(IntPtr buffer, int length, IntPtr user)
         {
@@ -148,61 +150,79 @@ namespace Analyzer
 
         public static List<byte> getSpectrumData(float[] fftData, int bands, double r, double factor)
         {
-            //int retBands = bands;
-            //bands = Convert.ToInt32(((double)bands) / r);
-            int precision = 16;
-            var list = new List<byte>();
-            int sumSteps = 0;
-            int sum = 0;
-            var items = getSpectrumData(fftData, 71, factor);
-            int totalBands = items.Count;
-            double step = (totalBands * precision) / (double)(bands + 2);
-            foreach(byte value in items)
+            if (r == 1.0)
             {
-                for(int i = 0; i < precision; i++)
-                {
-                    sum += value;
-                    if (++sumSteps > step)
-                    {
-                        list.Add((byte)(sum / step));
-                        sumSteps = 0;
-                        sum = 0;
-                    }
-                }
+                return getSpectrumData(fftData, bands, factor);
             }
-            //while(list.Count < bands)
-            //{
-            //    list.Add(0);
-            //}
-            return list.GetRange(0, bands);
+            else
+            {
+                int retBands = bands;
+                bands = Convert.ToInt32(((double)bands) / r);
+                return getSpectrumData(fftData, bands, factor).GetRange(0, retBands);
+            }
+        }
+
+        private static int getFftBandIndex(float frequency)
+        {
+            double f = 44100 / 2.0;
+            return (int)((frequency / f) * (_fftSize / 2));
         }
 
         public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
         {
-            float max = fftData.Max();
-            float min = fftData.Min();
+            //float max = fftData.Max();
+            //float min = fftData.Min();
             List<byte> result = new List<byte>();
 
+            bands = 32;
+
+            // max frequency for logarithmic scale
+            double maxFrequency = 16000;
+            double px = 1.15;
+            double mul = maxFrequency / Math.Pow(px, bands);
 
             int x, y;
             int b0 = 0;
             for (x = 0; x < bands; x++)
             {
                 float peak = 0;
-                int b1 = (int)Math.Pow(2, x * 5 / (bands - 1));
-                if (b1 > 1023) b1 = 1023;
-                if (b1 <= b0) b1 = b0 + 1;
-                for (; b0 < b1; b0++)
+                float frequency = (float)(Math.Pow(px, x + 1) * mul); // logarithmic spectrum up to maxFrequency
+                //float frequency = (x + 1) * (44100 / 2) / bands; // linear spectrum
+
+                int b1 = getFftBandIndex(frequency);
+                if (b0 == b1)
                 {
-                    if (peak < fftData[1 + b0]) peak = fftData[1 + b0];
+                    peak = fftData[b0];
                 }
-                y = (int)(Math.Sqrt(peak) * 4 * 255 - 4);
-                if (y > 255) y = 255;
-                if (y < 0) y = 0;
+                else
+                {
+                    for (; b0 < b1; b0++)
+                    {
+                        if (peak < fftData[b0])
+                        {
+                            peak = fftData[b0];
+                        }
+                    }
+                }
+                y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
+                if (y < 0)
+                {
+                    y = 0;
+                }
+                else if (y > 255)
+                {
+                    y = 255;
+                }
                 result.Add((byte)y);
             }
 
-            return applyFactor(result, factor);
+            // wo do not want to display those bands
+            while (result.Count < 71)
+            {
+                result.Add(0);
+            }
+
+            return factor != 1.0 ? applyFactor(result, factor) : result;
         }
 
         public static List<byte> applyFactor(List<byte> x, double f)
@@ -211,8 +231,14 @@ namespace Analyzer
             foreach (byte b in x)
             {
                 int t = (int)(((double)b) * f);
-                if (t < 0) t = 0;
-                else if (t > 255) t = 255;
+                if (t < 0)
+                {
+                    t = 0;
+                }
+                else if (t > 255)
+                {
+                    t = 255;
+                }
                 ret.Add((byte)t);
             }
             return ret;
@@ -222,7 +248,10 @@ namespace Analyzer
         protected void OnAudioAvailable(float[] _toConv)
         {
             AudioAvailableEventHandler audioAvailable = AudioAvailable;
-            if (audioAvailable != null) audioAvailable(this, new AudioAvailableEventArgs(_toConv));
+            if (audioAvailable != null)
+            {
+                audioAvailable(this, new AudioAvailableEventArgs(_toConv));
+            }
             else
             {
                 //throw new NullReferenceException("No Handler!");
