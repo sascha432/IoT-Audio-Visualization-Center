@@ -31,8 +31,9 @@ namespace Analyzer
 
         private bool _initialized;          //initialized flag
         private int devindex;               //used device index
+        private readonly int _lastLevel;
+        private static int _sLastLevel = 0;
 
-        
         //ctor
 
         public AudioProcessor(int deviceIndex, bool trimEnd = true)
@@ -100,7 +101,7 @@ namespace Analyzer
         {
             // get fft data. Return value is -1 on error
             int len = 0;
-            switch(_fftSize)
+            switch (_fftSize)
             {
                 case 8192:
                     _fftSize = 8192;
@@ -126,7 +127,8 @@ namespace Analyzer
             _spectrumdata.Clear();
 
             int level = BassWasapi.GetLevel();
-            
+            _sLastLevel = level;
+
             _l = ManagedBass.BitHelper.LoWord(level);
             _r = ManagedBass.BitHelper.HiWord(level);
             if (level == _lastlevel && level != 0)
@@ -161,6 +163,7 @@ namespace Analyzer
         //cleanup
         public void Free()
         {
+            _sLastLevel = 0;
             BassWasapi.Free();
             Bass.Free();
         }
@@ -185,7 +188,22 @@ namespace Analyzer
             return (int)((frequency / f) * (_fftSize / 2));
         }
 
-    public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
+        public static byte getLeftLevel()
+        {
+            return (byte)(ManagedBass.BitHelper.LoWord(_sLastLevel) >> 7);
+        }
+
+        public static byte getRightLevel()
+        {
+            return (byte)(ManagedBass.BitHelper.HiWord(_sLastLevel) >> 7);
+        }
+
+        public static bool getLevelError()
+        {
+            return _sLastLevel == -1;
+        }
+
+        public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
         {
             //float max = fftData.Max();
             //float min = fftData.Min();

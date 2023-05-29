@@ -269,16 +269,61 @@ namespace Analyzer
             {
                 return true;
             }
-            var x = new byte[lines];
-            for (int i = 0; i < lines; i++)
+            if (port == 4210)
             {
-                x[i] = arr[i];
-                if (x[i] <= 0)
+                var x = new byte[lines];
+                for (int i = 0; i < lines; i++)
                 {
-                    x[i] = 1;
+                    x[i] = arr[i];
+                    if (x[i] <= 0)
+                    {
+                        x[i] = 1;
+                    }
                 }
+                return client.Send(x, lines) > 0;
             }
-            return client.Send(x, lines) > 0;
+            else
+            {
+                int size = 2 + 4 + 4 + 2 + ((lines + 3) & ~3);
+                var x = new byte[size] /* keep the data 4 byte aligned */;
+                byte n = 0;
+                x[n++] = 1; // WARLS protocol
+                x[n++] = 5; // 5 second timeout
+                x[n++] = 255; // LED 256: Magic Packet for Analylizer
+                x[n++] = 99;
+                x[n++] = 88;
+                x[n++] = 77;
+                x[n++] = 66; // LED 100: channel level
+                x[n++] = 55;
+                if (AudioProcessor.getLevelError())
+                {
+                    x[n++] = 0;
+                    x[n++] = 0;
+                }
+                else
+                {
+                    x[n++] = AudioProcessor.getLeftLevel();
+                    x[n++] = AudioProcessor.getRightLevel();
+                }
+                x[n++] = 44;
+                x[n++] = (byte)lines;
+                // the spectrum
+                for (int i = 0; i < lines; i++)
+                {
+                    x[n++] = arr[i];
+                }
+                // filler to match 4 bytes, all LED 0 
+                int filler = (lines % 4);
+                if (filler != 0) {
+                    filler = 4 - filler;
+                    while (filler-- > 0)
+                    {
+                        x[n++] = 0;
+                    }
+                }
+                return client.Send(x, size) > 0;
+            }
+            
         }
 
         public bool Send(string s)

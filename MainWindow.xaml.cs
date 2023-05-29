@@ -155,6 +155,7 @@ namespace Analyzer
             int port = 0;
             int lines = 32;
             int smoothing = 0;
+            //int protocol = 0;
 
             var x = new MetroDialogSettings();
             x.AffirmativeButtonText = "Next";
@@ -190,8 +191,8 @@ namespace Analyzer
             }
 
             string porttext = "";
-            x.DefaultText = "4210";
-            porttext = await this.ShowInputAsync("New Device", "On what UDP-Port should the data be sent?", x);
+            x.DefaultText = "21324";
+            porttext = await this.ShowInputAsync("New Device", "On what UDP-Port should the data be sent? (using 4210 will send the data in the old format, 21324 or any other port is using the WARLS protocol)", x);
             if (!int.TryParse(porttext, out port)) port = -1;
             while (port <= 0)
             {

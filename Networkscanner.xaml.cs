@@ -266,7 +266,7 @@ namespace Analyzer
             }
 
             string porttext = "";
-            x.DefaultText = "4210";
+            x.DefaultText = "21324";
             porttext = await this.ShowInputAsync("New Device", "On what UDP-Port should the data be sent?", x);
             if (!int.TryParse(porttext, out port)) port = -1;
             while (port <= 0)
