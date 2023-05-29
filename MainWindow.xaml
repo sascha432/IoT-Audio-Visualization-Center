@@ -54,7 +54,7 @@
                                 <ColumnDefinition Width="85*" />
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Content="Speed:" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="14"/>
-                            <Slider Grid.Column="1" x:Name="sldSpeed" HorizontalAlignment="Right" VerticalAlignment="Top" Width="210" BorderBrush="White" Background="{x:Null}" IsSnapToTickEnabled="True" Value="52" SmallChange="1" LargeChange="10" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" FontSize="16" Height="29" Minimum="1" Maximum="255"/>
+                            <Slider Grid.Column="1" x:Name="sldSpeed" ValueChanged="sldSpeed_ValueChanged" HorizontalAlignment="Right" VerticalAlignment="Top" Width="210" BorderBrush="White" Background="{x:Null}" IsSnapToTickEnabled="True" Value="52" SmallChange="1" LargeChange="10" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" FontSize="16" Height="29" Minimum="1" Maximum="255"/>
                         </Grid>
                         <Button x:Name="btnReboot" Content="Reboot" Click="btnReboot_Click"/>
                         <Button x:Name="btnAlexa" Content="Alexa Pairing" Click="btnAlexa_Click"/>

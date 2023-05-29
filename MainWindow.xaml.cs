@@ -321,6 +321,11 @@ namespace Analyzer
             RefreshDeviceList();
         }
 
+        private void sldSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            foreach (UdpDevice u in MyUtils.UdpDevices) u.setSpeedAsync((int)sldSpeed.Value);
+        }
+
         private void BtnSettings_Click(object sender, RoutedEventArgs e)
         {
 #if DEBUG
