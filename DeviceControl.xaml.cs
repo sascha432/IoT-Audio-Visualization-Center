@@ -38,7 +38,7 @@ namespace Analyzer
         }
 
         public static readonly DependencyProperty MyDeviceProperty =
-            DependencyProperty.Register("MyDevice", typeof(object), typeof(DeviceControl), new FrameworkPropertyMetadata(new UdpDevice("Meta", "192.168.0.210", 4120, 32, 2),
+            DependencyProperty.Register("MyDevice", typeof(object), typeof(DeviceControl), new FrameworkPropertyMetadata(new UdpDevice("Meta", "192.168.0.210", 21324, 32, 2),
                  FrameworkPropertyMetadataOptions.AffectsRender,
                    new PropertyChangedCallback(OnObjectChanged)));
 

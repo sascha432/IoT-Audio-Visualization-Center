@@ -352,5 +352,9 @@ namespace Analyzer
         {
             MyUtils.sourceFactor = sldSourceScale.Value / 100.0;
         }
+        private void sldLevelScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            MyUtils.levelFactor = sldLevelScale.Value / 100.0;
+        }
     }
 }

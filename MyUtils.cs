@@ -26,6 +26,7 @@ namespace Analyzer
         public static List<UdpDevice> UdpDevices = new List<UdpDevice>();
 
         public static double sourceFactor = 1.0;
+        public static double levelFactor = 1.0;
 
         public static int MapValue(double a0, double a1, double b0, double b1, byte a)
         {

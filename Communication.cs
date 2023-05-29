@@ -302,8 +302,18 @@ namespace Analyzer
                 }
                 else
                 {
-                    x[n++] = AudioProcessor.getLeftLevel();
-                    x[n++] = AudioProcessor.getRightLevel();
+                    var level = AudioProcessor.getLeftLevel() * MyUtils.levelFactor;
+                    if (level > 255) 
+                    {
+                        level = 255;
+                    }
+                    x[n++] = (byte)level;
+                    level = AudioProcessor.getRightLevel() * MyUtils.levelFactor;
+                    if (level > 255)
+                    {
+                        level = 255;
+                    }
+                    x[n++] = (byte)level;
                 }
                 x[n++] = 44;
                 x[n++] = (byte)lines;

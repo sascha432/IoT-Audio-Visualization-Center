@@ -14,7 +14,7 @@
         SizeChanged="MainWindow_SizeChanged"
         Title="Audio Visualization"  
         Height="760" 
-        Width="1200" 
+        Width="1100" 
         BorderThickness="0"
         WindowStartupLocation="CenterScreen" 
         MinWidth="425" 
@@ -35,8 +35,9 @@
         <!--<GroupBox x:Name="grpSettings" Header="Settings" Height="245" Margin="10,10,10,0" VerticalAlignment="Top" FontSize="16">-->
         <Grid>
             <Label Content="200%" Margin="0,59,200,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="39"/>
-            <Label Content="50%" Margin="0,236,206,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="33"/>
-            <Slider Name="sldSourceScale" Ticks="10,25,50,75,100,150,200,250,300,350,400" ValueChanged="sldSourceScale_ValueChanged" IsSnapToTickEnabled="true" BorderBrush="White" Background="{x:Null}" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" Width="30" Margin="0,85,209,0" HorizontalAlignment="Right" Maximum="400" Minimum="50" Orientation="Vertical"  Value="100" SmallChange="10" LargeChange="10" TickPlacement="TopLeft" Height="146" VerticalAlignment="Top"/>
+            <Label Content="25%" Margin="0,236,206,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="33"/>
+            <Slider Name="sldSourceScale" Ticks="25,50,75,100,150,200,250,300,350,400" ValueChanged="sldSourceScale_ValueChanged" IsSnapToTickEnabled="true" BorderBrush="White" Background="{x:Null}" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" Width="30" Margin="0,85,209,0" HorizontalAlignment="Right" Maximum="400" Minimum="25" Orientation="Vertical"  Value="100" SmallChange="10" LargeChange="10" TickPlacement="TopLeft" Height="146" VerticalAlignment="Top" AutoToolTipPlacement="TopLeft" AutomationProperties.HelpText="Spectrum Level"/>
+            <Slider Name="sldLevelScale" ValueChanged="sldLevelScale_ValueChanged" IsSnapToTickEnabled="true" BorderBrush="White" Background="{x:Null}" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black" Width="30" Margin="0,85,257,0" HorizontalAlignment="Right" Maximum="200" Minimum="75" Orientation="Vertical" Value="100" SmallChange="5" LargeChange="10" TickPlacement="TopLeft" Height="146" VerticalAlignment="Top" AutoToolTipPlacement="TopLeft" AutomationProperties.HelpText="VU Meter Level"/>
             <ComboBox x:Name="cboDevices" Margin="121,11,245,0" VerticalAlignment="Top" Height="38" SelectionChanged="CboDevices_SelectionChanged"/>
             <Label x:Name="label" Content="Audio source:" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" FontSize="16"/>
             <local:Spectrum x:Name="spcSource" BarHeight="200" TotalWidth="770" Lines="50" Margin="11,54,244,0" Smoothing="3" Height="200" VerticalAlignment="Top" HorizontalAlignment="Left" />
@@ -62,6 +63,11 @@
                     </mah:DropDownButton.Items>
                 </mah:DropDownButton>
             </GroupBox>
+            <Label Content="200%" Margin="0,59,200,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="39"/>
+            <Label Content="25%" Margin="0,236,206,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="33"/>
+            <Label Content="200%" Margin="0,59,249,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="39"/>
+            <Label Content="25%" Margin="0,236,206,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="33"/>
+            <Label Content="75%" Margin="0,236,252,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="33"/>
 
         </Grid>
 
