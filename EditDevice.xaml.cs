@@ -25,17 +25,10 @@ namespace Analyzer
         UdpDevice toEdit;
         MainWindow mainWindowInstance;
         string initialName;
-        ArrayList nudLinesItems;
 
         public EditDevice(UdpDevice u, MainWindow x)
         {
             InitializeComponent();
-            nudLinesItems = new ArrayList();
-            nudLinesItems.Add("1");
-            nudLinesItems.Add("8");
-            nudLinesItems.Add("16");
-            nudLinesItems.Add("32");
-            nudLinesItems.Add("64");
             toEdit = u;
             initialName = String.Copy(u.DeviceName);
             RefreshEditFields();
@@ -87,9 +80,16 @@ namespace Analyzer
             }
             try
             {
-                UdpDevice toSet = MyUtils.UdpDevices.Find(x => x.DeviceName == initialName);
-                toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value);
-                MyUtils.UdpDevices.Add(toSet);
+                var index = MyUtils.UdpDevices.FindIndex(x => x.DeviceName == initialName);
+                var toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value);
+                if (index < 0)
+                {
+                    MyUtils.UdpDevices.Add(toSet);
+                }
+                else
+                {
+                    MyUtils.UdpDevices[index] = toSet;
+                }
                 this.Close();
             }
             catch (Exception ex)

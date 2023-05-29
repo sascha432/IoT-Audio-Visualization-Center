@@ -76,7 +76,6 @@ namespace Analyzer
         #endregion
 
         #region Properties
-        public bool Enable { get => enable; set => enable = value; }
         public string DeviceName { get => deviceName; set => deviceName = value; }
         public int Lines { get => lines; set => lines = value; }
         public bool Smooth { get { return smooth; } set { smooth = value; } }
@@ -103,9 +102,6 @@ namespace Analyzer
         public int BandCount { get { return lines; } }
         public List<WebserverResponse> Info { get => info; set => info = value; }
         public List<Pattern> AllPatterns { get => allPatterns; set => allPatterns = value; }
-        public List<Pattern> VisualizationPatterns { get => visualizationPatterns; set => visualizationPatterns = value; }
-        public List<Pattern> RegularPatterns { get => regularPatterns; set => regularPatterns = value; }
-        public List<Pattern> TwinklePatterns { get => twinklePatterns; set => twinklePatterns = value; }
         #endregion
 
         #region Methods

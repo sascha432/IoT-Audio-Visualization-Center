@@ -39,7 +39,7 @@
                 <Button Grid.Column="0" x:Name="btnWeb" Content="Open Webinterface" Margin="10,174.667,10,0" FontSize="12" Click="BtnWeb_Click" Grid.Row="1" VerticalAlignment="Top"/>
                 <Button Grid.Column="1" x:Name="btnEdit" Content="Edit Device" Margin="10,174.667,10,0" FontSize="12" Click="BtnEdit_Click" Grid.Row="1" VerticalAlignment="Top"/>
 
-                <local:Spectrum x:Name="spcDev" Grid.ColumnSpan="2" BarHeight="85" TotalWidth="330" Width="330" Margin="10,0,10,0" Height="86" VerticalAlignment="Center" Grid.Row="1" Loaded="spcDev_Loaded"/>
+                <local:Spectrum x:Name="spcDev" Grid.ColumnSpan="2" BarHeight="85" TotalWidth="330" Width="330" Margin="10,0,10,0" Height="86" VerticalAlignment="Center" Grid.Row="1"/>
 
 
             </Grid>

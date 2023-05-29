@@ -37,7 +37,7 @@ namespace Analyzer
 
         public AudioProcessor(int deviceIndex, bool trimEnd = true)
         {
-            _fftSize = 8192;
+            _fftSize = 2048;
             _fft = new float[_fftSize];
             _lastlevel = 0;
             _hanctr = 0;
@@ -185,7 +185,7 @@ namespace Analyzer
             return (int)((frequency / f) * (_fftSize / 2));
         }
 
-        public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
+    public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
         {
             //float max = fftData.Max();
             //float min = fftData.Min();
@@ -193,18 +193,25 @@ namespace Analyzer
 
             bands = 32;
 
-            // max frequency for logarithmic scale
-            double maxFrequency = 16000;
-            double px = 1.22;
+            //// max frequency for logarithmic scale
+            double fIncr = 16800 / bands;
+            double maxFrequency = fIncr;
+            double px = 1.1;
             double mul = maxFrequency / Math.Pow(px, bands);
 
             int x, y;
             int b0 = 0;
+
+            List<float> b = new List<float>();
+
             for (x = 0; x < bands; x++)
             {
+                float frequency = (float)(Math.Pow(px, x) * mul); // logarithmic spectrum up to maxFrequency
                 float peak = 0;
-                float frequency = (float)(Math.Pow(px, x + 1) * mul); // logarithmic spectrum up to maxFrequency
-                //float frequency = (x + 1) * (44100 / 2) / bands; // linear spectrum
+                b.Add(frequency);
+
+                maxFrequency += fIncr;
+                mul = maxFrequency / Math.Pow(px, bands);
 
                 int b1 = getFftBandIndex(frequency);
                 if (b0 == b1)

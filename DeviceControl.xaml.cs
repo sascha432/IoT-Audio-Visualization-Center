@@ -116,10 +116,6 @@ namespace Analyzer
             }
         }
 
-        private void DeviceSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-        }
-
         private void CkbEnable_Changed(object sender, RoutedEventArgs e)
         {
             if (ckbEnable.IsChecked == true)
@@ -187,50 +183,6 @@ namespace Analyzer
             {
                 ;
             }
-        }
-
-        private void ToggleButton_Checked(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void sldSpeed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-        }
-
-        private void ddb_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-        {
-        }
-
-        private void btnOTA_Click(object sender, RoutedEventArgs e)
-        {
-            DeviceItem.modeOTA();
-        }
-
-        private void btnAlexa_Click(object sender, RoutedEventArgs e)
-        {
-            DeviceItem.modeAlexa();
-        }
-
-        private void btnReboot_Click(object sender, RoutedEventArgs e)
-        {
-            DeviceItem.modeReboot();
-        }
-
-        private void ddb_ContextMenuOpening(object sender, RoutedEventArgs e)
-        {
-            if(DeviceItem.RegularPatterns.Count <=0)
-            {
-                if (DeviceItem.getWebserverInfo()) RefreshDevice();
-            }
-        }
-
-        private void RefreshDevice()
-        {
-        }
-
-        private void spcDev_Loaded(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
