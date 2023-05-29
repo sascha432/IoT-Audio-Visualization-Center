@@ -342,9 +342,9 @@ namespace Analyzer
             Application.Current.Shutdown();
         }
 
-        private void spcSource_Loaded(object sender, RoutedEventArgs e)
+        private void sldSourceScale_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-
+            MyUtils.sourceFactor = sldSourceScale.Value / 100.0;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static System.Windows.Forms.LinkLabel;
 
 namespace Analyzer
 {
@@ -82,6 +84,14 @@ namespace Analyzer
             {
                 var index = MyUtils.UdpDevices.FindIndex(x => x.DeviceName == initialName);
                 var toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value);
+                if (index >= 0 && txtName.Text != initialName) 
+                {
+                    var result = MessageBox.Show("The name of the device has changed. Do you want to add it as new Device?", "Question", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.No)
+                    {
+                        index = -1;
+                    }
+                }
                 if (index < 0)
                 {
                     MyUtils.UdpDevices.Add(toSet);
