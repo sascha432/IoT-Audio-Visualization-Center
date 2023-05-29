@@ -87,7 +87,7 @@ namespace Analyzer
                 if (index >= 0 && txtName.Text != initialName) 
                 {
                     var result = MessageBox.Show("The name of the device has changed. Do you want to add it as new Device?", "Question", MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.No)
+                    if (result == MessageBoxResult.Yes)
                     {
                         index = -1;
                     }
