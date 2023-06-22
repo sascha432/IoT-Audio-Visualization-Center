@@ -20,6 +20,7 @@ namespace Analyzer
         private bool enable;
         private int port;
         private int lines;
+        private float logScale;
         private int smoothing;
         private bool smooth;
         public double range = 0.7;  // just take 50% of the fft data
@@ -45,24 +46,26 @@ namespace Analyzer
         #endregion
 
         #region Constructor
-        public UdpDevice(string name, string ipaddress, int port, int bandCount, int smoothing)
+        public UdpDevice(string name, string ipaddress, int port, int bandCount, int smoothing, float logScale)
         {
             deviceName = name;
             client = new UdpClient(ipaddress, port);
             ip = ipaddress;
             this.port = port;
             lines = bandCount;
+            this.logScale = logScale;
             getWebserverInfo();
             this.smoothing = smoothing;
         }
 
-        public UdpDevice(string name, string ipaddress, int port, int bandCount, int smoothing, string webResponse)
+        public UdpDevice(string name, string ipaddress, int port, int bandCount, int smoothing, float logScale, string webResponse)
         {
             deviceName = name;
             client = new UdpClient(ipaddress, port);
             ip = ipaddress;
             this.port = port;
             lines = bandCount;
+            this.logScale = logScale;
             try
             {
                 Info = JsonConvert.DeserializeObject<WebserverResponse[]>(webResponse).ToList();
@@ -80,6 +83,7 @@ namespace Analyzer
         public int Lines { get => lines; set => lines = value; }
         public bool Smooth { get { return smooth; } set { smooth = value; } }
         public int Smoothing { get => smoothing; set => smoothing = value; }
+        public float LogScale { get => logScale; set => logScale = value; }
         public int Port { get => port; set => port = value; }
         public string Ip { get => ip; set => ip = value; }
         public string Hostname
@@ -143,33 +147,34 @@ namespace Analyzer
 
         public bool getWebserverInfo()
         {
-            if (deviceName.ToLower() == "meta") return false;
-            string addr = "http://" + ip + "/all";
-            string response = "";
-            try
-            {
-                try
-                {
-                    using (WebClient webClient = new WebClient())
-                    {
-                        if (!this.Ready()) return false;
-                        var bytes = webClient.DownloadData(addr);
-                        UTF8Encoding utf8 = new UTF8Encoding();
-                        response = utf8.GetString(bytes);
-                    }
-                }
-                catch
-                {
-                    response = "";
-                }
+            return false;
+            //if (deviceName.ToLower() == "meta") return false;
+            //string addr = "http://" + ip + "/all";
+            //string response = "";
+            //try
+            //{
+            //    try
+            //    {
+            //        using (WebClient webClient = new WebClient())
+            //        {
+            //            if (!this.Ready()) return false;
+            //            var bytes = webClient.DownloadData(addr);
+            //            UTF8Encoding utf8 = new UTF8Encoding();
+            //            response = utf8.GetString(bytes);
+            //        }
+            //    }
+            //    catch
+            //    {
+            //        response = "";
+            //    }
 
-                if (String.IsNullOrEmpty(response)) return false;
+            //    if (String.IsNullOrEmpty(response)) return false;
 
-                Info = JsonConvert.DeserializeObject<WebserverResponse[]>(response).ToList();
-                if (info != null) EvaluateWebserverInfo(Info);
-            }
-            catch { Info = null; return false; }
-            return true;
+            //    Info = JsonConvert.DeserializeObject<WebserverResponse[]>(response).ToList();
+            //    if (info != null) EvaluateWebserverInfo(Info);
+            //}
+            //catch { Info = null; return false; }
+            //return true;
         }
 
         public bool modeOTA()
@@ -367,7 +372,7 @@ namespace Analyzer
 
         public void UpdateValues(object sender, AudioAvailableEventArgs e)
         {
-            var newData = AudioProcessor.getSpectrumData(e.AudioAvailable, lines, range, MyUtils.sourceFactor);
+            var newData = AudioProcessor.getSpectrumData(e.AudioAvailable, lines, range, MyUtils.sourceFactor, logScale);
             lastVals.Enqueue(newData);
             while (lastVals.Count > Smoothing)
             {
@@ -386,7 +391,7 @@ namespace Analyzer
 
         public UdpDevice DeepCopy()
         {
-            UdpDevice deep = new UdpDevice(this.deviceName, this.ip, this.port, this.lines, this.smoothing, "");
+            UdpDevice deep = new UdpDevice(this.deviceName, this.ip, this.port, this.lines, this.smoothing, this.logScale, "");
             deep.smooth = this.smooth;
             return deep;
         }
@@ -403,18 +408,21 @@ namespace Analyzer
     {
         public SerialPort Serial { get; set; }
         public int Lines { get => lines; set => lines = value; }
+        public float LogScale { get => logScale; set => logScale = value; }
 
         private int lines;
+        private float logScale;
 
         public SerialComDevice(SerialPort s)
         {
             Serial = s;
         }
 
-        public SerialComDevice(string port, int baud, int bands)
+        public SerialComDevice(string port, int baud, int bands, float logScale)
         {
             Serial = new SerialPort(port, baud);
             Lines = bands;
+            LogScale = logScale;
         }
 
         public bool Send(List<byte> data)
@@ -463,7 +471,7 @@ namespace Analyzer
         {
             if (this.Ready())
             {
-                Send(AudioProcessor.getSpectrumData(e.AudioAvailable, lines, MyUtils.sourceFactor));
+                Send(AudioProcessor.getSpectrumData(e.AudioAvailable, lines, MyUtils.sourceFactor, logScale));
             }
         }
 
@@ -480,21 +488,24 @@ namespace Analyzer
         private Spectrum spec;
         private Queue<List<Byte>> lastVals = new Queue<List<byte>>();
         private int smoothing;
+        private float logScale;
         public double range = 0.7;
         public string name;
         
 
-        public WpfUserControlDevice(int lines, Spectrum spec, string n)
+        public WpfUserControlDevice(int lines, float logScale, Spectrum spec, string n)
         {
             this.lines = lines;
             this.spec = spec;
             enable = false;
             Smoothing = 10;
+            LogScale = logScale;
             name = n;
         }
 
         public bool Smooth { get { return (Smoothing > 0); } set { if (!value) smoothing = 0; } }
         public int Smoothing { get => smoothing; set => smoothing = value; }
+        public float LogScale { get => logScale; set => logScale = value; }
 
         public bool Ready()
         {
@@ -548,7 +559,7 @@ namespace Analyzer
 
         public void UpdateValues(object sender, AudioAvailableEventArgs e)
         {
-            var newData = AudioProcessor.getSpectrumData(e.AudioAvailable, lines, range, MyUtils.sourceFactor);
+            var newData = AudioProcessor.getSpectrumData(e.AudioAvailable, lines, range, MyUtils.sourceFactor, logScale);
             lastVals.Enqueue(newData);
             while (lastVals.Count > Smoothing)
             {
@@ -671,7 +682,7 @@ namespace Analyzer
         {
             if (this.Ready())
             {
-                Send(AudioProcessor.getSpectrumData(e.AudioAvailable, 32, MyUtils.sourceFactor));
+                Send(AudioProcessor.getSpectrumData(e.AudioAvailable, 32, MyUtils.sourceFactor, 1.08f));
             }
         }
     }

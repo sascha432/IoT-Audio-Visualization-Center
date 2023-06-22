@@ -31,7 +31,7 @@ namespace Analyzer
 
         private bool _initialized;          //initialized flag
         private int devindex;               //used device index
-        private readonly int _lastLevel;
+        //private readonly int _lastLevel;
         private static int _sLastLevel = 0;
 
         //ctor
@@ -168,23 +168,23 @@ namespace Analyzer
             Bass.Free();
         }
 
-        public static List<byte> getSpectrumData(float[] fftData, int bands, double r, double factor)
+        public static List<byte> getSpectrumData(float[] fftData, int bands, double r, double factor, float logScale)
         {
             if (r == 1.0)
             {
-                return getSpectrumData(fftData, bands, factor);
+                return getSpectrumData(fftData, bands, factor, logScale);
             }
             else
             {
                 int retBands = bands;
                 bands = Convert.ToInt32(((double)bands) / r);
-                return getSpectrumData(fftData, bands, factor).GetRange(0, retBands);
+                return getSpectrumData(fftData, bands, factor, logScale).GetRange(0, retBands);
             }
         }
 
         private static int getFftBandIndex(float frequency)
         {
-            double f = 44100 / 2.0;
+            const double f = 44100 / 2.0;
             return (int)((frequency / f) * (_fftSize / 2));
         }
 
@@ -203,34 +203,59 @@ namespace Analyzer
             return _sLastLevel == -1;
         }
 
-        public static List<byte> getSpectrumData(float[] fftData, int bands, double factor)
+/* python code to display bands and frequencies
+         
+import math
+
+bands = 32
+px = 1.092
+fIncr = 16800 / bands
+maxFrequency = fIncr
+mul = maxFrequency / math.pow(px, bands)
+pxMul = 1.0 / math.pow(px, bands)
+
+frequencyB = 0
+pxPow = 1.0
+for x in range(0, bands):
+
+    frequency = pxPow * mul;
+    pxPow *= px
+    maxFrequency += fIncr;
+    mul = maxFrequency * pxMul;
+
+    print('band %02u frequency %.0f-%.0f Hz' % (x, frequencyB, frequency))
+    frequencyB = frequency
+        
+*/         
+
+        public static List<byte> getSpectrumData(float[] fftData, int bands, double factor, float logScale)
         {
             //float max = fftData.Max();
             //float min = fftData.Min();
             List<byte> result = new List<byte>();
 
-            bands = 32;
+            const int _bands = 32;
 
-            //// max frequency for logarithmic scale
-            double fIncr = 16800 / bands;
-            double maxFrequency = fIncr;
-            double px = 1.1;
-            double mul = maxFrequency / Math.Pow(px, bands);
+            // max frequency for logarithmic scale
+            const float fIncr = 16800 / _bands;
+            float maxFrequency = fIncr;
+            float px = logScale;
+            float mul = (float)(maxFrequency / Math.Pow(px, _bands));
+            float pxMul = (float)(1.0 / Math.Pow(px, _bands));
+            float pxPow = 1.0f; // temporary variable that stores Math.Pow(px, x) in the loop
 
             int x, y;
             int b0 = 0;
 
-            List<float> b = new List<float>();
-
-            for (x = 0; x < bands; x++)
+            for (x = 0; x < _bands; x++)
             {
-                float frequency = (float)(Math.Pow(px, x) * mul); // logarithmic spectrum up to maxFrequency
-                float peak = 0;
-                b.Add(frequency);
-
+                //float frequency = (float)(Math.Pow(px, x) * mul); // logarithmic spectrum up to maxFrequency
+                float frequency = pxPow * mul;
+                pxPow *= px;
                 maxFrequency += fIncr;
-                mul = maxFrequency / Math.Pow(px, bands);
+                mul = maxFrequency * pxMul;
 
+                float peak = 0;
                 int b1 = getFftBandIndex(frequency);
                 if (b0 == b1)
                 {

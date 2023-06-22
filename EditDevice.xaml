@@ -8,7 +8,7 @@
         Closing="Window_Closing"
         mc:Ignorable="d"
         Name="EditDeviceWindow"
-        Title="Edit Device" Height="400" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Focusable="False">
+        Title="Edit Device" Height="460" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Focusable="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -21,17 +21,19 @@
                     <ColumnDefinition Width="8*" />
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" x:Name="label" Content="Device Name:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <Label Grid.Column="0" x:Name="label2" Content="IP:" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Grid.Column="0" x:Name="label1" Content="IP:" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Grid.Column="0" x:Name="label2" Content="Port:" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" FontSize="14"/>
                 <Label Grid.Column="0" x:Name="label3" Content="Number of Lines:" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" FontSize="14"/>
                 <Label Grid.Column="0" x:Name="label4" Content="Smoothing:" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" FontSize="14"/>
-                <TextBox Grid.Column="1" mah:TextBoxHelper.ClearTextButton="True" x:Name="txtName" HorizontalAlignment="Left" Height="29" Margin="15,10,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="180" FontSize="14" mah:ControlsHelper.FocusBorderBrush="{x:Null}" mah:ControlsHelper.MouseOverBorderBrush="{x:Null}"/>
-                <TextBox Grid.Column="1" mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.Watermark="192.168.0.xxx" x:Name="txtIp" HorizontalAlignment="Left" Height="29" Margin="15,44,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="180" FontSize="14" TextChanged="TxtIp_TextChanged" mah:ControlsHelper.FocusBorderBrush="{x:Null}" mah:ControlsHelper.MouseOverBorderBrush="{x:Null}"/>
-                <mah:NumericUpDown Grid.Column="1" Name="nudLines" Minimum="1" Maximum="64" Interval="1" Margin="17,123,25,129"/>
-                <mah:NumericUpDown Grid.Column="1" Name="nudPort" Minimum="1" Maximum="99999" Interval="1" Margin="17,78,25,174"/>
-                <Label Grid.Column="0" x:Name="label2_Copy" Content="Port:" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <Label Grid.Column="0" x:Name="label5" Content="Logarithmic Scale:" HorizontalAlignment="Left" Margin="10,246,0,0" VerticalAlignment="Top" FontSize="14"/>
+                <TextBox Grid.Column="1" mah:TextBoxHelper.ClearTextButton="True" x:Name="txtName" HorizontalAlignment="Left" Height="29" Margin="15,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="14" mah:ControlsHelper.FocusBorderBrush="{x:Null}" mah:ControlsHelper.MouseOverBorderBrush="{x:Null}"/>
+                <TextBox Grid.Column="1" mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.Watermark="192.168.0.xxx" x:Name="txtIp" HorizontalAlignment="Left" Height="29" Margin="15,44,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="14" TextChanged="TxtIp_TextChanged" mah:ControlsHelper.FocusBorderBrush="{x:Null}" mah:ControlsHelper.MouseOverBorderBrush="{x:Null}"/>
+                <mah:NumericUpDown Grid.Column="1" Name="nudPort" Minimum="1" Maximum="65535" Interval="1" Margin="17,82,25,240"/>
+                <mah:NumericUpDown Grid.Column="1" Name="nudLines" Minimum="1" Maximum="64" Interval="1" Margin="17,124,25,190"/>
                 <Slider x:Name="sldSmoothing" Minimum="1" Maximum="50" Grid.Column="1" HorizontalAlignment="Left" Height="40" Margin="15,179,0,0" VerticalAlignment="Top" Width="150" BorderBrush="White" Background="{x:Null}" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="2" Foreground="{x:Null}" mah:SliderHelper.EnableMouseWheel="ControlFocused" mah:SliderHelper.ThumbFillBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillHoverBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillPressedBrush="#FFCFCFCF" mah:SliderHelper.ThumbFillDisabledBrush="Black"/>
+                <TextBox Grid.Column="1" mah:TextBoxHelper.ClearTextButton="True" mah:TextBoxHelper.Watermark="1.092" x:Name="txtLogScale" HorizontalAlignment="Left" Height="29" Margin="15,246,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="14" mah:ControlsHelper.FocusBorderBrush="{x:Null}" mah:ControlsHelper.MouseOverBorderBrush="{x:Null}" LostFocus="TxtLogScale_LostFocus"/>
                 <Label Grid.Column="1" x:Name="lblSmoothing" Content="{Binding ElementName=sldSmoothing, Path=Value}" FontSize="14" Margin="170,190,11,62"/>
-                <Grid Grid.ColumnSpan="2" Margin="0,250,0,0">
+                <Grid Grid.ColumnSpan="2" Margin="0,306,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />

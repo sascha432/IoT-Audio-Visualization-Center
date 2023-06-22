@@ -47,37 +47,16 @@ namespace Analyzer
             set { SetValue(SmoothingProperty, value); }
         }
 
-
+        public float LogScale
+        {
+            get { return (float)GetValue(LogScaleProperty); }
+            set { SetValue(LogScaleProperty, value); }
+        }
 
         public string SpecName
         {
             get { return (string)GetValue(SpecProperty); }
             set { SetValue(SpecProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for Name.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SpecProperty =
-            DependencyProperty.Register("SpecName", typeof(string), typeof(Spectrum), new PropertyMetadata("placeholder"));
-
-
-
-        // Using a DependencyProperty as the backing store for Smoothing.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SmoothingProperty =
-            DependencyProperty.Register("Smoothing", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(0,
-                 FrameworkPropertyMetadataOptions.AffectsRender,
-                   new PropertyChangedCallback(OnSmoothingChanged)));
-
-        private static void OnSmoothingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            Spectrum xyz = d as Spectrum;
-            bool runnin = false; if (xyz.wucd != null && xyz.wucd.Ready()) runnin = true;
-            xyz.disable();
-            xyz.wucd = new WpfUserControlDevice(xyz.Lines, xyz, xyz.SpecName);
-            xyz.wucd.Smoothing = xyz.Smoothing;
-            xyz.bars = xyz.GenerateProgressBars();
-            xyz.icProgressBars.ItemsSource = xyz.bars;
-            xyz.disable();
-            if(runnin) xyz.enable();
         }
 
         public int Lines
@@ -86,44 +65,70 @@ namespace Analyzer
             set { SetValue(LinesProperty, value); }
         }
 
+        // Using a DependencyProperty as the backing store for Name.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SpecProperty =
+            DependencyProperty.Register("SpecName", typeof(string), typeof(Spectrum), new PropertyMetadata("placeholder"));
+
+        // Using a DependencyProperty as the backing store for Smoothing.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SmoothingProperty =
+            DependencyProperty.Register("Smoothing", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(0,
+                 FrameworkPropertyMetadataOptions.AffectsRender,
+                   new PropertyChangedCallback(OnObjectChanged)));
+
+        public static readonly DependencyProperty LogScaleProperty =
+            DependencyProperty.Register("LogScale", typeof(float), typeof(Spectrum), new FrameworkPropertyMetadata(1.092f,
+                 FrameworkPropertyMetadataOptions.AffectsRender,
+                   new PropertyChangedCallback(OnObjectChanged)));
+
         // Using a DependencyProperty as the backing store for Lines.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LinesProperty =
             DependencyProperty.Register("Lines", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(10,
                  FrameworkPropertyMetadataOptions.AffectsRender,
-                   new PropertyChangedCallback(OnLineCountSet)));
+                   new PropertyChangedCallback(OnObjectChanged)));
+
+        //private static void OnSmoothingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    Spectrum xyz = d as Spectrum;
+        //    bool runnin = false; if (xyz.wucd != null && xyz.wucd.Ready()) runnin = true;
+        //    xyz.disable();
+        //    xyz.wucd = new WpfUserControlDevice(xyz.Lines, xyz.LogScale, xyz, xyz.SpecName);
+        //    xyz.wucd.Smoothing = xyz.Smoothing;
+        //    xyz.wucd.LogScale = xyz.LogScale;
+        //    xyz.bars = xyz.GenerateProgressBars();
+        //    xyz.icProgressBars.ItemsSource = xyz.bars;
+        //    xyz.disable();
+        //    if(runnin) xyz.enable();
+        //}
 
         private static void OnObjectChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             Spectrum xyz = d as Spectrum;
-            //xyz.SpectrumVisualizer.Height = xyz.BarHeight;
-            //xyz.MainGrid.Height = xyz.BarHeight;
-            //xyz.SpectrumVisualizer.Width = xyz.TotalWidth;
-            //xyz.MainGrid.Width = xyz.TotalWidth;
             bool runnin = false; if(xyz.wucd != null && xyz.wucd.Ready()) runnin = true;
             xyz.Width = xyz.TotalWidth;
-
             xyz.Height = xyz.BarHeight;
             xyz.disable();
-            xyz.wucd = new WpfUserControlDevice(xyz.Lines, xyz, xyz.SpecName);
+            xyz.wucd = new WpfUserControlDevice(xyz.Lines, xyz.LogScale, xyz, xyz.SpecName);
             xyz.wucd.Smoothing = xyz.Smoothing;
+            xyz.wucd.LogScale = xyz.LogScale;
             xyz.bars = xyz.GenerateProgressBars();
             xyz.icProgressBars.ItemsSource = xyz.bars;
             xyz.disable();
             if (runnin) xyz.enable();
         }
 
-        private static void OnLineCountSet(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            Spectrum xyz = d as Spectrum;
-            bool runnin = false; if (xyz.wucd != null && xyz.wucd.Ready()) runnin = true;
-            xyz.disable();
-            xyz.wucd = new WpfUserControlDevice(xyz.Lines, xyz, xyz.SpecName);
-            xyz.wucd.Smoothing = xyz.Smoothing;
-            xyz.bars = xyz.GenerateProgressBars();
-            xyz.icProgressBars.ItemsSource = xyz.bars;
-            xyz.disable();
-            if (runnin) xyz.enable();
-        }
+        //private static void OnLineCountSet(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    Spectrum xyz = d as Spectrum;
+        //    bool runnin = false; if (xyz.wucd != null && xyz.wucd.Ready()) runnin = true;
+        //    xyz.disable();
+        //    xyz.wucd = new WpfUserControlDevice(xyz.Lines, xyz.LogScale, xyz, xyz.SpecName);
+        //    xyz.wucd.Smoothing = xyz.Smoothing;
+        //    xyz.wucd.LogScale = xyz.LogScale;
+        //    xyz.bars = xyz.GenerateProgressBars();
+        //    xyz.icProgressBars.ItemsSource = xyz.bars;
+        //    xyz.disable();
+        //    if (runnin) xyz.enable();
+        //}
 
         public int BarHeight
         {

@@ -251,6 +251,7 @@ namespace Analyzer
             int port = 0;
             int lines = 32;
             int smoothing = 0;
+            float logScale = 1.092f;
 
             var x = new MetroDialogSettings();
             x.AffirmativeButtonText = "Next";
@@ -288,6 +289,18 @@ namespace Analyzer
                 if (!int.TryParse(smtext, out smoothing)) smoothing = -1;
             }
 
+            x.DefaultText = "1.092";
+            string logtext = "";
+
+            logtext = await this.ShowInputAsync("New Device", "Logarithmic scale (1.001 - 1.2)?", x);
+            if (!float.TryParse(smtext, out logScale)) logScale = 0;
+            while ((logScale < 1.001 || logScale > 1.2))
+            {
+                smtext = await this.ShowInputAsync("Invalid Number!", "Logarithmic scale (1.001 - 1.2)?", x);
+                if (String.IsNullOrEmpty(logtext)) return;
+                if (!float.TryParse(logtext, out logScale)) logScale = 0;
+            }
+
             x.AffirmativeButtonText = "Add Device";
             x.NegativeButtonText = "Cancel Device Creation";
             var res = await this.ShowMessageAsync("Confirm", "Name: " + devicename + "\nIP-Address: " + ip + "\nLines: " + lines, MessageDialogStyle.AffirmativeAndNegative, x);
@@ -295,7 +308,7 @@ namespace Analyzer
 
             try
             {
-                UdpDevice newDev = new UdpDevice(devicename, ip, port, lines, smoothing);
+                UdpDevice newDev = new UdpDevice(devicename, ip, port, lines, smoothing, logScale);
                 newDev.Smooth = true;
                 MyUtils.UdpDevices.Add(newDev);
                 foreach (Window window in Application.Current.Windows)

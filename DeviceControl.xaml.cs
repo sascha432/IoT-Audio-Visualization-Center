@@ -38,7 +38,7 @@ namespace Analyzer
         }
 
         public static readonly DependencyProperty MyDeviceProperty =
-            DependencyProperty.Register("MyDevice", typeof(object), typeof(DeviceControl), new FrameworkPropertyMetadata(new UdpDevice("Meta", "192.168.0.210", 21324, 32, 2),
+            DependencyProperty.Register("MyDevice", typeof(object), typeof(DeviceControl), new FrameworkPropertyMetadata(new UdpDevice("Meta", "192.168.0.210", 21324, 32, 2, 1.092f),
                  FrameworkPropertyMetadataOptions.AffectsRender,
                    new PropertyChangedCallback(OnObjectChanged)));
 
@@ -47,6 +47,14 @@ namespace Analyzer
             get
             {
                 return DeviceItem.Smoothing;
+            }
+        }
+
+        public float LogScale
+        {
+            get
+            {
+                return DeviceItem.LogScale;
             }
         }
 
@@ -111,8 +119,11 @@ namespace Analyzer
             get
             {
                 string host = DeviceItem.Hostname;
-                if (!String.IsNullOrEmpty(host)) return "Hostname: " + host + ", IP: " + DeviceItem.Ip;
-                else return "IP: " + DeviceItem.Ip;
+                string ret = "";
+                if (!String.IsNullOrEmpty(host)) ret = "Hostname: " + host + "\n";
+                ret += "IP: " + DeviceItem.Ip + "\n";
+                ret += "Log Scale: " + DeviceItem.LogScale.ToString();
+                return ret;
             }
         }
 

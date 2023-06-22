@@ -49,6 +49,7 @@ namespace Analyzer
         {
             txtName.Text = toEdit.DeviceName;
             txtIp.Text = toEdit.Ip;
+            txtLogScale.Text = toEdit.LogScale.ToString();
             txtOutput.Text = "";
             nudLines.Value = toEdit.Lines;
             nudPort.Value = toEdit.Port;
@@ -83,7 +84,7 @@ namespace Analyzer
             try
             {
                 var index = MyUtils.UdpDevices.FindIndex(x => x.DeviceName == initialName);
-                var toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value);
+                var toSet = new UdpDevice(txtName.Text, txtIp.Text, (int)nudPort.Value, (int)nudLines.Value, (int)sldSmoothing.Value, normalizeLogScale(txtLogScale.Text));
                 if (index >= 0 && txtName.Text != initialName) 
                 {
                     var result = MessageBox.Show("The name of the device has changed. Do you want to add it as new Device?", "Question", MessageBoxButton.YesNo);
@@ -128,6 +129,37 @@ namespace Analyzer
                 btnSave.IsEnabled = true;
                 btnTestConnection.IsEnabled = true;
             }
+        }
+
+        private float normalizeLogScale(String text)
+        {
+            const float minVal = 1.001f;
+            const float maxVal = 1.200f;
+            float value;
+            try
+            {
+                value = float.Parse(text);
+            }
+            catch (Exception)
+            {
+                value = 1.092f;
+            }
+
+            if (value < minVal)
+            {
+                value = minVal;
+            }
+            else if (value > maxVal)
+            {
+                value = maxVal;
+            }
+            return value;
+        }
+
+        private void TxtLogScale_LostFocus(object sender, RoutedEventArgs e)
+        {
+            float value = normalizeLogScale(txtLogScale.Text);
+            txtLogScale.Text = value.ToString();
         }
 
         private void BtnTestConnection_Click(object sender, RoutedEventArgs e)

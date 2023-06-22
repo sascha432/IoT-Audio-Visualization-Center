@@ -30,7 +30,7 @@
                     </Grid.ColumnDefinitions>
                 </Grid>
 
-                <Label  Grid.Column="0" x:Name="lblDetails" Content="{Binding Details, ElementName=DeviceControlItem}" HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top" FontSize="14" Height="29" Width="155" Panel.ZIndex="1"/>
+                <Label Grid.Column="0" x:Name="lblDetails" Content="{Binding Details, ElementName=DeviceControlItem}" HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top" FontSize="14" Height="120" Width="155" Panel.ZIndex="1"/>
 
                 <mah:ToggleSwitch Grid.Column="1" Grid.Row="0" Name="ckbEnable" Header="Stream Data" OnLabel="On" OffLabel="Off" Margin="10,10,0,0" Checked="CkbEnable_Changed" Unchecked="CkbEnable_Changed" FontSize="14" Foreground="White" mah:ControlsHelper.HeaderFontSize="11" ContentPadding="0,0,4,0" mah:ControlsHelper.HeaderMargin="0,0,0,4" VerticalAlignment="Top" HorizontalAlignment="Left" Height="56" Grid.RowSpan="2" Width="94"/>
                 <mah:ToggleSwitch Grid.Column="1" Grid.Row="1" Name="ckbSmoothing" Header="Smooth Spectrum" OnLabel="On" OffLabel="Off" Margin="10,10,0,0" Checked="CkbSmoothing_Changed" Unchecked="CkbSmoothing_Changed" FontSize="14" Foreground="White" mah:ControlsHelper.HeaderFontSize="11" ContentPadding="0,0,4,0" mah:ControlsHelper.HeaderMargin="0,0,0,4" Width="94" VerticalAlignment="Top" HorizontalAlignment="Left"/>
