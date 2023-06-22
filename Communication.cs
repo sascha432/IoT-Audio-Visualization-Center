@@ -289,17 +289,15 @@ namespace Analyzer
             }
             else
             {
-                int size = 2 + 4 + 4 + 2 + ((lines + 3) & ~3);
+                int size = 2 + 4 + 2 + ((lines + 3) & ~3) + 2;
                 var x = new byte[size] /* keep the data 4 byte aligned */;
                 byte n = 0;
                 x[n++] = 1; // WARLS protocol
                 x[n++] = 5; // 5 second timeout
-                x[n++] = 255; // LED 256: Magic Packet for Analylizer
-                x[n++] = 99;
-                x[n++] = 88;
+
+                // magic bytes
+                x[n++] = 222;
                 x[n++] = 77;
-                x[n++] = 66; // LED 100: channel level
-                x[n++] = 55;
                 if (AudioProcessor.getLevelError())
                 {
                     x[n++] = 0;
@@ -320,21 +318,18 @@ namespace Analyzer
                     }
                     x[n++] = (byte)level;
                 }
-                x[n++] = 44;
+                // magic bytes
+                x[n++] = 66;
                 x[n++] = (byte)lines;
                 // the spectrum
                 for (int i = 0; i < lines; i++)
                 {
                     x[n++] = arr[i];
                 }
-                // filler to match 4 bytes, all LED 0 
-                int filler = (lines % 4);
-                if (filler != 0) {
-                    filler = 4 - filler;
-                    while (filler-- > 0)
-                    {
-                        x[n++] = 0;
-                    }
+                // fill with zeros
+                while(n < size)
+                {
+                    x[n++] = 0;
                 }
                 return client.Send(x, size) > 0;
             }
