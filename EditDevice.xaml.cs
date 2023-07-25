@@ -133,7 +133,7 @@ namespace Analyzer
 
         private float normalizeLogScale(String text)
         {
-            const float minVal = 1.001f;
+            const float minVal = 1.00001f;
             const float maxVal = 1.200f;
             float value;
             try

@@ -232,11 +232,11 @@ namespace Analyzer
             x.DefaultText = "1.092";
             string logtext = "";
 
-            logtext = await this.ShowInputAsync("New Device", "Logarithmic scale (1.001 - 1.2)?", x);
-            if (!float.TryParse(smtext, out logScale)) logScale = 0;
-            while ((logScale < 1.001 || logScale > 1.2))
+            logtext = await this.ShowInputAsync("New Device", "Logarithmic scale (1.00001 - 1.2)?", x);
+            if (!float.TryParse(logtext, out logScale)) logScale = 0;
+            while ((logScale < 1.00001 || logScale > 1.2))
             {
-                smtext = await this.ShowInputAsync("Invalid Number!", "Logarithmic scale (1.001 - 1.2)?", x);
+                logtext = await this.ShowInputAsync("Invalid Number!", "Logarithmic scale (1.00001 - 1.2)?", x);
                 if (String.IsNullOrEmpty(logtext)) return;
                 if (!float.TryParse(logtext, out logScale)) logScale = 0;
             }
